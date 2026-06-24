@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="סיירת א-ב - משחק דפדפן שיתופי ותנועתי לילדים בגילאי 5-7. הפעילו את הילדים בבית עם משימות אוריינות ותנועה מהנות!">
+    <title>סיירת א-ב ⭐️ משחק שיתופי לילדים</title>
+    <!-- CSS style with cache busting parameter -->
+    <link rel="stylesheet" href="style.css?v=1.0.3">
+</head>
+<body>
+    <!-- Background Floating Letters -->
+    <div class="bg-letters-container" id="bgLetters"></div>
+
+    <div id="app">
+        <!-- Sticky Navigation Header -->
+        <header class="app-header" id="appHeader">
+            <!-- Right Home Button -->
+            <button class="header-btn" id="homeBtn" aria-label="חזרה לדף הבית">🏠</button>
+            
+            <!-- Center Header Title or Group Name -->
+            <div class="header-group-name" id="headerTitle">סיירת א-ב ⭐️</div>
+            
+            <!-- Left Score Display -->
+            <div class="header-score-container hidden" id="headerScore">
+                <span>🏆</span>
+                <span id="scoreValue">0</span>
+                <span>נקודות</span>
+            </div>
+        </header>
+
+        <!-- SCREEN 1: Setup Screen -->
+        <main class="screen active" id="screenSetup" aria-labelledby="setupTitle">
+            <div class="setup-container">
+                <h1 class="setup-title" id="setupTitle">סיירת א-ב 🚀</h1>
+                
+                <!-- Group Name Input -->
+                <div class="input-group">
+                    <label for="groupNameInput" class="input-label">שם הקבוצה:</label>
+                    <input type="text" id="groupNameInput" class="text-input" placeholder="לדוגמא: קבוצת האריות, הדרקונים..." autocomplete="off">
+                </div>
+
+                <!-- Avatar Selection Grid -->
+                <div class="avatar-section">
+                    <div class="avatar-header-row">
+                        <span class="input-label">בחרו דמות:</span>
+                        <button class="refresh-avatars-btn" id="refreshAvatarsBtn" aria-label="החלף דמויות">
+                            <span>🔄</span> להחלפת דמויות
+                        </button>
+                    </div>
+                    <div class="avatar-grid" id="avatarGrid" role="radiogroup" aria-label="בחירת דמות">
+                        <!-- Loaded dynamically via JS -->
+                    </div>
+                </div>
+
+                <!-- Error Alert Box -->
+                <div class="error-message" id="setupError" role="alert"></div>
+
+                <!-- Start Action Button -->
+                <button class="btn-3d btn-orange" id="startBtn">צאו לדרך!</button>
+            </div>
+        </main>
+
+        <!-- SCREEN 2: Gameplay Screen -->
+        <main class="screen" id="screenGameplay" aria-labelledby="gameTitle">
+            <div class="game-container">
+                <h1 class="visually-hidden" id="gameTitle">לוח המשחק הראשי</h1>
+                
+                <!-- Alphabet Wheel -->
+                <div class="wheel-outer-container">
+                    <div class="wheel-wrapper">
+                        <div class="wheel-pointer"></div>
+                        <div class="wheel-circle" id="fortuneWheel" role="button" aria-label="גלגל הגרלת אות, לחצו כדי לסובב"></div>
+                        <div class="wheel-center-pointer">
+                            <span class="wheel-letter-display" id="letterDisplay">?</span>
+                        </div>
+                    </div>
+                    <div class="wheel-label" id="wheelInstructions">לחצו על הגלגל להגרלת אות!</div>
+                </div>
+
+                <!-- Mission Card -->
+                <div class="mission-card" id="missionCard">
+                    <div class="mission-team-title" id="missionTeamTitle">צוות, צאו לדרך!</div>
+                    <div class="mission-text" id="missionText">סובבו את הגלגל למעלה כדי לקבל משימה חדשה...</div>
+                </div>
+
+                <!-- Timer & Controls Row -->
+                <div class="timer-controls-row">
+                    <!-- Circular Timer Component -->
+                    <div class="timer-circle-container" id="timerContainer" aria-live="polite">
+                        <svg class="timer-svg" viewBox="0 0 100 100">
+                            <circle class="timer-track" cx="50" cy="50" r="45"></circle>
+                            <circle class="timer-progress" id="timerProgress" cx="50" cy="50" r="45" stroke-dasharray="282.7" stroke-dashoffset="0"></circle>
+                        </svg>
+                        <div class="timer-circle-inner">
+                            <span class="timer-number" id="timerNumber">01:00</span>
+                            <span class="timer-label">שניות</span>
+                        </div>
+                    </div>
+
+                    <!-- Sidebar Control Buttons -->
+                    <div class="side-controls">
+                        <!-- Add 10 seconds -->
+                        <button class="btn-3d btn-green btn-time-plus" id="addTimeBtn">⏱️ +10 שניות</button>
+                        
+                        <!-- Finish Mission -->
+                        <button class="btn-3d btn-blue" id="finishMissionBtn">🌟 סיימנו! לקבלת ניקוד</button>
+                    </div>
+                </div>
+
+                <!-- Skip/Change Mission Button -->
+                <button class="btn-3d btn-neutral" id="skipMissionBtn">🔄 החלף משימה</button>
+            </div>
+
+            <!-- Time Out Overlay Dialog (Shown when timer hits 0) -->
+            <div class="time-out-overlay" id="timeOutOverlay" role="dialog" aria-modal="true" aria-labelledby="timeoutTitle">
+                <div class="time-out-title" id="timeoutTitle">⏳ נגמר הזמן!</div>
+                <div class="time-out-text">לא נורא, משתפים פעולה וממשיכים!</div>
+                <button class="btn-3d btn-green" id="timeoutRestartBtn">הפעלת הטיימר מחדש ⏱️</button>
+                <button class="btn-3d btn-neutral" id="timeoutSkipBtn">דלגו למשימה הבאה 🔄</button>
+            </div>
+        </main>
+
+        <!-- SCREEN 3: Score Panel Screen -->
+        <main class="screen" id="screenScore" aria-labelledby="scoreTitle">
+            <div class="score-panel-card">
+                <h1 class="score-panel-title" id="scoreTitle">כל הכבוד! 🎉</h1>
+                <p class="score-panel-sub">החליטו יחד: כמה נקודות מגיעות לכם על הביצוע?</p>
+                
+                <!-- Centered Selected Avatar -->
+                <div class="score-avatar-wrapper">
+                    <div class="score-avatar-container" id="scoreAvatarContainer">
+                        <img src="" alt="דמות שנבחרה" class="score-avatar-img" id="scoreAvatarImg">
+                    </div>
+                </div>
+
+                <!-- Friendly Drag Slider (1-5 Stars) -->
+                <div class="slider-container">
+                    <div class="slider-row">
+                        <!-- Right (Start): 1 Star -->
+                        <div class="slider-start-label" aria-hidden="true">
+                            <span>⭐</span>
+                        </div>
+                        
+                        <!-- Range slider input -->
+                        <div class="slider-input-wrapper">
+                            <input type="range" id="scoreSlider" min="1" max="5" value="3" step="1" aria-label="בחירת ניקוד מ-1 עד 5">
+                        </div>
+
+                        <!-- Left (End): 5 Stars in Pyramid -->
+                        <div class="slider-end-label" aria-hidden="true">
+                            <div class="pyramid-stars">
+                                <div class="stars-top">⭐⭐⭐</div>
+                                <div class="stars-bottom">⭐⭐</div>
+                            </div>
+                        </div>
+                    </div>                    <!-- Dynamic Score Display -->
+                    <div class="slider-selection-display" id="sliderSelectionDisplay">
+                        <span class="selection-score-num" id="selectionScoreNum">3</span>
+                        <span class="selection-score-text">נקודות!</span>
+                        <div class="selection-stars-render" id="selectionStarsRender">⭐⭐⭐</div>
+                    </div>
+                    
+                    <!-- Submit Score Button -->
+                    <button class="btn-3d btn-blue" id="submitScoreBtn">אישור ניקוד! 🌟</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Home Confirmation Overlay Modal Dialog -->
+    <div class="dialog-overlay" id="homeConfirmDialog" role="dialog" aria-modal="true" aria-labelledby="dialogTitle">
+        <div class="dialog-card">
+            <div class="dialog-title" id="dialogTitle">חזרה להתחלה? 🏠</div>
+            <div class="dialog-text">האם אתם בטוחים שברצונכם לחזור להתחלה ולאפס את כל הניקוד שנצבר?</div>
+            <div class="dialog-buttons">
+                <button class="btn-3d btn-neutral" id="cancelHomeBtn">ביטול</button>
+                <button class="btn-3d btn-orange" id="confirmHomeBtn">כן, לחזור ולאפס</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Toast Message Popup Container -->
+    <div class="toast" id="toastContainer" role="alert" aria-live="assertive">
+        <span class="toast-icon" id="toastIcon">✨</span>
+        <span id="toastMessage">יש! הוספתם נקודות לקופה!</span>
+    </div>
+
+    <!-- Game Logic with cache busting parameter -->
+    <script src="app.js?v=1.0.3"></script>
+</body>
+</html>
